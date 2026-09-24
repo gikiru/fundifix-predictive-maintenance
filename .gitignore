@@ -19,3 +19,8 @@ venv/
 Thumbs.db
 models/*.pkl
 models/*.joblib
+data/processed/*.duckdb
+logs/
+reports/gx/uncommitted/
+.venv/
+.pytest_cache/
