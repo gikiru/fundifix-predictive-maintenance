@@ -94,7 +94,7 @@ data_docs_sites:
       class_name: DefaultSiteIndexBuilder
 
 anonymous_usage_statistics:
-  data_context_id: d46bdee9-50cf-4214-8182-589f5c245608
+  data_context_id: 815e28b9-7be1-4bbb-bf50-5bf7937742f9
   enabled: true
 fluent_datasources:
   wpdx_clean:

@@ -1,0 +1,9 @@
+                precision    recall  f1-score   support
+
+    Functional      0.835     0.673     0.745      1344
+  Needs Repair      0.413     0.610     0.492       292
+Non-Functional      0.350     0.483     0.406       319
+
+      accuracy                          0.633      1955
+     macro avg      0.533     0.589     0.548      1955
+  weighted avg      0.693     0.633     0.652      1955

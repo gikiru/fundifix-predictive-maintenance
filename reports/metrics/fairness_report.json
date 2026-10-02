@@ -1,0 +1,87 @@
+{
+  "threshold": 0.27,
+  "groupings": {
+    "county": {
+      "demographic_parity_difference": 0.6519446275543836,
+      "disparate_impact_ratio": 0.044675199227239795,
+      "equalized_odds_difference": 0.8589743589743589,
+      "groups_compared": 10,
+      "groups_too_small": [
+        "Bungoma",
+        "Kericho",
+        "Kisii",
+        "Machakos",
+        "Marsabit",
+        "Nairobi",
+        "Uasin Gishu",
+        "Vihiga"
+      ],
+      "accuracy_gap_3_class": 0.40384615384615385,
+      "flag_di": true,
+      "flag_eo": true
+    },
+    "urban_rural": {
+      "demographic_parity_difference": 0.26093157488506324,
+      "disparate_impact_ratio": 0.3782335772260205,
+      "equalized_odds_difference": 0.6886792452830188,
+      "groups_compared": 2,
+      "groups_too_small": [],
+      "accuracy_gap_3_class": 0.25363267223732344,
+      "flag_di": true,
+      "flag_eo": true
+    },
+    "road_access": {
+      "demographic_parity_difference": 0.1704054758149129,
+      "disparate_impact_ratio": 0.6420164035206094,
+      "equalized_odds_difference": 0.19893524554541497,
+      "groups_compared": 3,
+      "groups_too_small": [],
+      "accuracy_gap_3_class": 0.13406896157936432,
+      "flag_di": true,
+      "flag_eo": true
+    },
+    "data_source": {
+      "demographic_parity_difference": 0.13461479786422575,
+      "disparate_impact_ratio": 0.7038926174496645,
+      "equalized_odds_difference": 0.36199961693162225,
+      "groups_compared": 3,
+      "groups_too_small": [
+        "Marsabit Water_Kenya_2012"
+      ],
+      "accuracy_gap_3_class": 0.2107975252140012,
+      "flag_di": true,
+      "flag_eo": true
+    }
+  },
+  "mitigation": {
+    "method": "Fairlearn ThresholdOptimizer, true positive rate parity by county",
+    "counties": [
+      "Busia",
+      "Embu",
+      "Kajiado",
+      "Kakamega",
+      "Kiambu",
+      "Kisumu",
+      "Makueni",
+      "Migori",
+      "Nyamira",
+      "Siaya"
+    ],
+    "before": {
+      "demographic_parity_difference": 0.6519446275543836,
+      "disparate_impact_ratio": 0.044675199227239795,
+      "equalized_odds_difference": 0.8589743589743589,
+      "recall_nf": 0.6872964169381107,
+      "precision_nf": 0.26982097186700765,
+      "flag_rate": 0.41662226957911563
+    },
+    "after": {
+      "demographic_parity_difference": 0.3277114686040477,
+      "disparate_impact_ratio": 0.3582317073170732,
+      "equalized_odds_difference": 0.6336206896551724,
+      "recall_nf": 0.6286644951140065,
+      "precision_nf": 0.2813411078717201,
+      "flag_rate": 0.36547682472029835
+    }
+  }
+}

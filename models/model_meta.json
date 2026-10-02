@@ -1,0 +1,45 @@
+{
+  "registered_model": "fundifix-status-classifier",
+  "version": 1,
+  "alias": "champion",
+  "family": "random_forest",
+  "classes": [
+    "Functional",
+    "Needs Repair",
+    "Non-Functional"
+  ],
+  "features": [
+    "age_at_report",
+    "install_year_missing",
+    "local_population",
+    "assigned_population",
+    "usage_cap",
+    "criticality",
+    "pressure",
+    "distance_to_primary",
+    "distance_to_secondary",
+    "distance_to_tertiary",
+    "distance_to_city",
+    "distance_to_town",
+    "water_source_clean",
+    "water_tech_clean",
+    "management_clean",
+    "is_urban"
+  ],
+  "nf_threshold": 0.27,
+  "test_metrics": {
+    "accuracy": 0.6910485933503836,
+    "balanced_accuracy": 0.5665169582490673,
+    "macro_precision": 0.5586037402293116,
+    "macro_recall": 0.5665169582490673,
+    "macro_f1": 0.5618863517377471,
+    "roc_auc_ovr_macro": 0.7744000130715811,
+    "recall_functional": 0.8028273809523809,
+    "recall_needs_repair": 0.5205479452054794,
+    "recall_non_functional": 0.3761755485893417,
+    "precision_functional": 0.8137254901960784,
+    "precision_needs_repair": 0.4634146341463415,
+    "precision_non_functional": 0.39867109634551495
+  },
+  "training_scope": "4 mixed-label WPdx sources, 9,773 records"
+}

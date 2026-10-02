@@ -11,6 +11,9 @@ information about an identified or identifiable natural person):
 Removed as a precaution, not a legal requirement:
   - lat_deg, lon_deg: exact GPS points are not needed outside the project.
 
+Kept on purpose:
+  - clean_adm1/2/3 (county, sub-county, ward): public place names that
+    describe thousands of people, not individuals. Needed for analysis.
 """
 import pandas as pd
 import logging

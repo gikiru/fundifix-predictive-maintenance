@@ -1,0 +1,196 @@
+{
+  "sample_size": 600,
+  "top_features": {
+    "water_tech_clean": 0.1853,
+    "water_source_clean": 0.1835,
+    "distance_to_primary": 0.0921,
+    "age_at_report": 0.0644,
+    "distance_to_town": 0.0623,
+    "distance_to_city": 0.0575,
+    "distance_to_secondary": 0.0569,
+    "local_population": 0.042
+  },
+  "top_features_non_functional": {
+    "water_source_clean": 0.0736,
+    "water_tech_clean": 0.0361,
+    "distance_to_town": 0.0231,
+    "distance_to_city": 0.0177,
+    "distance_to_primary": 0.0151,
+    "criticality": 0.0148,
+    "distance_to_secondary": 0.014,
+    "local_population": 0.0139
+  },
+  "local": {
+    "caught": {
+      "p_nf": 0.8302368641849047,
+      "wpdx_id": "6G9VWV9J+J84"
+    },
+    "missed": {
+      "p_nf": 0.015455505077385795,
+      "wpdx_id": "6GGP6P5G+QQC"
+    }
+  },
+  "counterfactual_queries": [
+    {
+      "wpdx_id": "6G9VWV9J+J84",
+      "age_at_report": "50.0",
+      "install_year_missing": "0",
+      "local_population": "204.0",
+      "assigned_population": "204.0",
+      "usage_cap": "nan",
+      "criticality": "1.0",
+      "pressure": "nan",
+      "distance_to_primary": "23427.277839892828",
+      "distance_to_secondary": "11930.12526060726",
+      "distance_to_tertiary": "14720.453683671596",
+      "distance_to_city": "80425.509021508",
+      "distance_to_town": "23104.72841817345",
+      "water_source_clean": "Sand or Sub-surface Dam",
+      "water_tech_clean": "Public Tapstand",
+      "management_clean": "Community Management",
+      "is_urban": "rural"
+    },
+    {
+      "wpdx_id": "6GFPVJWP+34H",
+      "age_at_report": "2.0",
+      "install_year_missing": "0",
+      "local_population": "nan",
+      "assigned_population": "nan",
+      "usage_cap": "250.0",
+      "criticality": "nan",
+      "pressure": "nan",
+      "distance_to_primary": "4460.1858222546725",
+      "distance_to_secondary": "327.51439792657686",
+      "distance_to_tertiary": "835.7465208116633",
+      "distance_to_city": "13226.799834579317",
+      "distance_to_town": "15261.38058257234",
+      "water_source_clean": "Piped Water",
+      "water_tech_clean": "Public Tapstand",
+      "management_clean": "Community Management",
+      "is_urban": "rural"
+    },
+    {
+      "wpdx_id": "6GGPF8CG+5CR",
+      "age_at_report": "28.0",
+      "install_year_missing": "0",
+      "local_population": "1761.0",
+      "assigned_population": "365.0",
+      "usage_cap": "300.0",
+      "criticality": "0.2072685973878478",
+      "pressure": "1.2166666666666666",
+      "distance_to_primary": "455.7199650070199",
+      "distance_to_secondary": "1240.6988194093408",
+      "distance_to_tertiary": "90.89762792945662",
+      "distance_to_city": "26218.96238686848",
+      "distance_to_town": "17595.386914847895",
+      "water_source_clean": "Protected Well",
+      "water_tech_clean": "Hand Pump - Afridev",
+      "management_clean": "No Management",
+      "is_urban": "rural"
+    }
+  ],
+  "counterfactual_query_p_nf": [
+    0.8302368641849047,
+    0.7965918778737614,
+    0.7668232436276904
+  ],
+  "counterfactuals": [
+    {
+      "water_point": 0,
+      "changes": {
+        "Pump / technology type": {
+          "from": "Public Tapstand",
+          "to": "Hand Pump - Rope"
+        }
+      }
+    },
+    {
+      "water_point": 0,
+      "changes": {
+        "Pump / technology type": {
+          "from": "Public Tapstand",
+          "to": "Hand Pump - Afridev"
+        }
+      }
+    },
+    {
+      "water_point": 0,
+      "changes": {
+        "Management type": {
+          "from": "Community Management",
+          "to": "Private Operator/Delegated Management"
+        },
+        "Pump / technology type": {
+          "from": "Public Tapstand",
+          "to": "Hand Pump - SWN 80"
+        }
+      }
+    },
+    {
+      "water_point": 1,
+      "changes": {
+        "Pump / technology type": {
+          "from": "Public Tapstand",
+          "to": "Motorized Pump"
+        }
+      }
+    },
+    {
+      "water_point": 1,
+      "changes": {
+        "Pump / technology type": {
+          "from": "Public Tapstand",
+          "to": "Rope and Bucket"
+        }
+      }
+    },
+    {
+      "water_point": 1,
+      "changes": {
+        "Management type": {
+          "from": "Community Management",
+          "to": "Private Operator/Delegated Management"
+        }
+      }
+    },
+    {
+      "water_point": 2,
+      "changes": {
+        "Management type": {
+          "from": "No Management",
+          "to": "Private Operator/Delegated Management"
+        },
+        "Pump / technology type": {
+          "from": "Hand Pump - Afridev",
+          "to": "Public Tapstand"
+        }
+      }
+    },
+    {
+      "water_point": 2,
+      "changes": {
+        "Management type": {
+          "from": "No Management",
+          "to": "Community Management"
+        },
+        "Pump / technology type": {
+          "from": "Hand Pump - Afridev",
+          "to": "Hand Pump - Rope"
+        }
+      }
+    },
+    {
+      "water_point": 2,
+      "changes": {
+        "Management type": {
+          "from": "No Management",
+          "to": "Community Management"
+        },
+        "Pump / technology type": {
+          "from": "Hand Pump - Afridev",
+          "to": "Hand Pump"
+        }
+      }
+    }
+  ]
+}

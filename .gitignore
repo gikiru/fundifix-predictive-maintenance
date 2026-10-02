@@ -11,7 +11,6 @@ build/
 .env
 venv/
 .venv/
-`n.venv/
 .vscode/
 .idea/
 *.swp
@@ -22,5 +21,8 @@ models/*.joblib
 data/processed/*.duckdb
 logs/
 reports/gx/uncommitted/
-.venv/
 .pytest_cache/
+mlflow.db
+mlruns/
+mlartifacts/
+.venv/
