@@ -18,6 +18,7 @@ venv/
 Thumbs.db
 models/*.pkl
 models/*.joblib
+!models/fundifix_model.joblib
 data/processed/*.duckdb
 logs/
 reports/gx/uncommitted/

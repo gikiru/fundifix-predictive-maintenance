@@ -1,0 +1,9 @@
+# Dashboard only. Streamlit Community Cloud reads this file because it sits next to app/dashboard.py.
+# scikit-learn, numpy and joblib must match the versions that trained models/fundifix_model.joblib.
+streamlit==1.60.0
+plotly==7.1.0
+pandas==2.2.3
+numpy==1.26.4
+scikit-learn==1.9.1
+joblib==1.6.0
+fairlearn==0.14.0

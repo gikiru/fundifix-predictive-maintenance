@@ -50,3 +50,16 @@ uvicorn api.main:app --reload      # API docs at http://127.0.0.1:8000/docs
 ```
 
 Outputs: `reports/figures/`, `reports/metrics/`, `docs/model_card.md`, `docs/fairness_report.md`, `notebooks/04_evaluation.ipynb`.
+
+## Module 5: stakeholder dashboard and API demo
+
+```bash
+python -m src.models.dashboard_data      # rebuild app/data/ from the trained model (only after retraining)
+streamlit run app/dashboard.py           # run the dashboard locally at http://localhost:8501
+python -m uvicorn api.main:app           # terminal 1: start the API
+python scripts/api_demo.py               # terminal 2: send three sample water points to /predict
+```
+
+The dashboard is deployed on Streamlit Community Cloud with entrypoint `app/dashboard.py`.
+Cloud installs `app/requirements.txt`, which pins the same scikit-learn version that trained the model.
+`models/fundifix_model.joblib` must be committed for the deployed app to load the model.
