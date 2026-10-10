@@ -35,7 +35,7 @@ pip install -r requirements.txt
 
 Apache 2.0
 
-## Module 4: model, explanations, fairness and API
+## model, explanations, fairness and API
 
 Run from the repo root, in this order, after the Module 3 pipeline (`python src/data/pipeline.py`):
 
@@ -51,7 +51,7 @@ uvicorn api.main:app --reload      # API docs at http://127.0.0.1:8000/docs
 
 Outputs: `reports/figures/`, `reports/metrics/`, `docs/model_card.md`, `docs/fairness_report.md`, `notebooks/04_evaluation.ipynb`.
 
-## Module 5: stakeholder dashboard and API demo
+## stakeholder dashboard and API demo
 
 ```bash
 python -m src.models.dashboard_data      # rebuild app/data/ from the trained model (only after retraining)
