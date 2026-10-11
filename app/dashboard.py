@@ -1,5 +1,5 @@
 """
-FundiFix water point risk dashboard (Capstone Module 5).
+FundiFix water point risk dashboard.
 
 Run locally from the repo root:   streamlit run app/dashboard.py
 Deployed on Streamlit Community Cloud with app/requirements.txt.
