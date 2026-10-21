@@ -4,15 +4,15 @@
 
 Decision support for [FundiFix Ltd](https://fundifix.org/), which repairs rural water points in Kitui and Kwale, Kenya, under a three-day repair guarantee. The system ranks water points by their chance of being broken now, explains each rating, checks it for fairness, and monitors itself after deployment.
 
-MSc Data Analytics capstone, Nexford University. Modules 1 to 5 and the Final Project.
+This is a project done as part of fulfilment of requirements for a Business Analytics Capstone Project of the MS in Data Analytics course at Nexford University.
 
 ## Live system
 
 | What | Link |
 |---|---|
-| Stakeholder dashboard (with explainability and fairness tabs) | `[insert Streamlit Cloud URL]` |
+| Stakeholder dashboard (with explainability and fairness tabs) | https://fundifixpredictivemaintenance.streamlit.app/ |
 | Monitoring dashboard | same app, **Monitoring** tab |
-| Live API (`/predict`, `/explanations/{id}`) | `https://fundifix-api.onrender.com/docs` (replace with your Render URL) |
+| Live API (`/predict`, `/explanations/{id}`) | https://fundifix-api.onrender.com/docs |
 | CI/CD runs | [GitHub Actions](https://github.com/gikiru/fundifix-predictive-maintenance/actions) |
 
 ## Results in one paragraph
