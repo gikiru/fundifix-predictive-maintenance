@@ -1,0 +1,15 @@
+{
+  "downloaded": "2026-09",
+  "files": {
+    "wpdx_enhanced.csv": {
+      "sha256": "79062d2463daff90cdb7f1adde5306c59d212f254aa1afc12df8f55e4c08c528",
+      "bytes": 10661478,
+      "source": "https://data.humdata.org/dataset/wpdx_ken"
+    },
+    "adm_analysis.csv": {
+      "sha256": "e874bcb2166153c30f1a4012717d2d05ee7846cfe53daf2c9497d8e97adf0f15",
+      "bytes": 924881,
+      "source": "https://data.humdata.org/dataset/wpdx_ken"
+    }
+  }
+}

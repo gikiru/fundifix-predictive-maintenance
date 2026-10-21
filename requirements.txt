@@ -26,3 +26,7 @@ uvicorn==0.54.0
 httpx==0.28.1
 ipykernel==7.4.0
 nbconvert==7.17.1
+# Final Project: monitoring, LIME cross-check, API deployment
+evidently==0.7.23
+lime==0.2.0.1
+huggingface_hub>=0.30

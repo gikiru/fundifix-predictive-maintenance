@@ -1,0 +1,41 @@
+# Weekly check that the live API and dashboard answer. Opens an issue if either is down.
+# Set repository variables HF_SPACE (<hf-username>/fundifix-api) and DASHBOARD_URL.
+name: uptime
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"        # Mondays 07:00 Nairobi time
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the live API and dashboard
+        id: check
+        env:
+          HF_SPACE: ${{ vars.HF_SPACE }}
+          DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
+        run: |
+          fail=""
+          if [ -n "$HF_SPACE" ]; then
+            HOST="https://$(echo "$HF_SPACE" | tr '/_.' '---' | tr 'A-Z' 'a-z').hf.space"
+            ok=""; for i in $(seq 1 10); do curl -sf "$HOST/health" && ok=1 && break; sleep 30; done
+            [ -z "$ok" ] && fail="$fail API($HOST)"
+          fi
+          if [ -n "$DASHBOARD_URL" ]; then
+            curl -sfL -o /dev/null "$DASHBOARD_URL" || fail="$fail dashboard($DASHBOARD_URL)"
+          fi
+          echo "fail=$fail" >> "$GITHUB_OUTPUT"
+          [ -z "$fail" ] && echo "All services answered."
+      - name: Open an issue if something is down
+        if: steps.check.outputs.fail != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({owner: context.repo.owner, repo: context.repo.repo,
+              title: `Uptime check failed: ${{ steps.check.outputs.fail }}`,
+              body: "The weekly uptime check could not reach the service(s) above. See docs/monitoring_plan.md, section on incident response."})

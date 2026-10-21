@@ -2,6 +2,7 @@
 Shared settings for Module 4 modelling.
 Every script imports from here so the feature list, classes and paths stay in one place.
 """
+import os
 from pathlib import Path
 
 RANDOM_STATE = 42
@@ -14,7 +15,7 @@ MODEL_PATH = MODEL_DIR / "fundifix_model.joblib"
 FIG_DIR = Path("reports/figures")
 METRICS_DIR = Path("reports/metrics")
 
-MLFLOW_URI = "sqlite:///mlflow.db"
+MLFLOW_URI = os.environ.get("MLFLOW_TRACKING_URI", "sqlite:///mlflow.db")   # Docker Compose sets its own
 EXPERIMENT = "fundifix-status-model"
 REGISTERED_MODEL = "fundifix-status-classifier"
 

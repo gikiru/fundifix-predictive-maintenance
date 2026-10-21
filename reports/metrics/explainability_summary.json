@@ -23,16 +23,16 @@
   "local": {
     "caught": {
       "p_nf": 0.8302368641849047,
-      "wpdx_id": "6G9VWV9J+J84"
+      "wpdx_id": "[location ID removed]"
     },
     "missed": {
       "p_nf": 0.015455505077385795,
-      "wpdx_id": "6GGP6P5G+QQC"
+      "wpdx_id": "[location ID removed]"
     }
   },
   "counterfactual_queries": [
     {
-      "wpdx_id": "6G9VWV9J+J84",
+      "wpdx_id": "[location ID removed]",
       "age_at_report": "50.0",
       "install_year_missing": "0",
       "local_population": "204.0",
@@ -51,7 +51,7 @@
       "is_urban": "rural"
     },
     {
-      "wpdx_id": "6GFPVJWP+34H",
+      "wpdx_id": "[location ID removed]",
       "age_at_report": "2.0",
       "install_year_missing": "0",
       "local_population": "nan",
@@ -70,7 +70,7 @@
       "is_urban": "rural"
     },
     {
-      "wpdx_id": "6GGPF8CG+5CR",
+      "wpdx_id": "[location ID removed]",
       "age_at_report": "28.0",
       "install_year_missing": "0",
       "local_population": "1761.0",

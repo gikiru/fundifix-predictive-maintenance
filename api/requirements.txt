@@ -1,0 +1,11 @@
+# API only (Docker image for Docker Compose and the Hugging Face Space).
+# scikit-learn, numpy and joblib must match the versions that trained models/fundifix_model.joblib.
+fastapi==0.142.0
+uvicorn==0.54.0
+pydantic==2.13.5
+pandas==2.2.3
+numpy==1.26.4
+scikit-learn==1.9.1
+joblib==1.6.0
+shap==0.49.1
+duckdb==1.5.5

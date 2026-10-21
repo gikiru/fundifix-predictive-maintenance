@@ -1,0 +1,14 @@
+.git
+venv
+.venv
+__pycache__
+*.pyc
+mlflow.db
+mlruns
+mlartifacts
+mlflow_docker
+data/raw/*.csv
+data/processed
+logs
+notebooks
+reports/gx/uncommitted

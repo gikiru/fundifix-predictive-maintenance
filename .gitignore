@@ -27,3 +27,8 @@ mlflow.db
 mlruns/
 mlartifacts/
 .venv/
+# Final Project
+data/explanation_store.duckdb
+data/new/
+models/candidates/
+mlflow_docker/

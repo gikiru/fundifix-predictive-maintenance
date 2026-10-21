@@ -1,5 +1,5 @@
 """
-FundiFix water point risk dashboard.
+FundiFix water point risk dashboard (Capstone Module 5).
 
 Run locally from the repo root:   streamlit run app/dashboard.py
 Deployed on Streamlit Community Cloud with app/requirements.txt.
@@ -79,7 +79,7 @@ def bar(labels, values, color=TEAL, text=None, xtitle="", height=320, xrange=Non
 # ---------- sidebar ----------
 with st.sidebar:
     st.markdown("### FundiFix water point risk")
-    st.caption("MSc Data Analytics capstone, Nexford University. Module 5.")
+    st.caption("MSc Data Analytics capstone, Nexford University. Final Project.")
     st.markdown(
         f"**Model:** random forest, version {S['model_version']}  \n"
         f"**Water points shown:** {S['test_rows']:,} test-set points the model never trained on  \n"
@@ -90,7 +90,7 @@ with st.sidebar:
 
 st.title("Which water points are most likely broken right now?")
 tabs = st.tabs(["Overview", "Visit list", "What drives risk", "Explain a water point",
-                "What-if", "Fairness check", "Limits and transparency"])
+                "What-if", "Fairness check", "Monitoring", "Limits and transparency"])
 
 # ---------- 1. Overview ----------
 with tabs[0]:
@@ -159,6 +159,9 @@ with tabs[1]:
                               "top_reasons": "Top 3 reasons"}))
     st.dataframe(table, width="stretch", hide_index=True, height=420,
                  column_config={"Chance broken": st.column_config.ProgressColumn(format="%.2f", min_value=0, max_value=1)})
+    st.download_button("Download this visit list (CSV)", table.to_csv(index=False).encode("utf-8"),
+                       file_name=f"fundifix_visit_list_t{t:.2f}.csv", mime="text/csv",
+                       help="For field teams with poor connectivity. Supervisor sign-off is still required.")
     st.caption("This list is for planning only. Actual status is hidden here, as it would be in real use.")
 
 # ---------- 3. What drives risk ----------
@@ -207,7 +210,9 @@ with tabs[3]:
                           font=dict(size=13, color=INK))
         st.plotly_chart(fig, width="stretch")
         st.caption("Each bar shows how much one feature pushed this water point's chance of being broken "
-                   "up (orange) or down (navy), in percentage points.")
+                   "up (orange) or down (navy), in percentage points. Reasons come from SHAP. "
+                   "A second method (LIME) agrees on the first reason for about half of points and shares fewer than "
+                   "half of the top three, so treat the first reason as the most reliable.")
 
 # ---------- 5. What-if ----------
 with tabs[4]:
@@ -327,8 +332,120 @@ with tabs[5]:
                             "Broken points": mitigation[("before", "broken_points")].astype(int)}).round(2)
         st.dataframe(mit, width="stretch")
 
-# ---------- 7. Limits and transparency ----------
+# ---------- 7. Monitoring (Final Project) ----------
+SEV = {"green": ("OK", "#2E7D32"), "amber": ("Review", "#B26A00"), "red": ("Act", "#B3261E")}
+
+
+@st.cache_data
+def load_monitoring():
+    mdir = DATA / "monitoring"
+    if not (mdir / "summary.json").exists():
+        return None, None
+    m = json.loads((mdir / "summary.json").read_text())
+    hist = pd.read_json(mdir / "history.jsonl", lines=True) if (mdir / "history.jsonl").exists() else None
+    return m, hist
+
+
 with tabs[6]:
+    M, H = load_monitoring()
+    st.subheader("Is the model still working, and still fair?")
+    if M is None:
+        st.info("No monitoring run found. Run python -m src.monitoring.monitor")
+    else:
+        th = M["thresholds"]
+        st.caption(f"Last monitoring run: {M['run_at'][:16].replace('T', ' ')} UTC. Model version {M['model_version']}, "
+                   f"visit threshold {M['nf_threshold']:.2f}. Reference: {M['reference_rows']:,} training records. "
+                   "Weekly job: src/monitoring/monitor.py (Evidently for drift, Fairlearn for fairness).")
+        cols = st.columns(len(M["batches"]))
+        for c, b in zip(cols, M["batches"]):
+            word, colour = SEV[b["status"]]
+            c.markdown(f"<div style='border:1px solid #D5DBE3;border-radius:6px;padding:10px'>"
+                       f"<div style='font-size:13px;color:#5A6472'>{b['label']}</div>"
+                       f"<div style='font-size:22px;font-weight:700;color:{colour}'>{word} ({b['status']})</div>"
+                       f"<div style='font-size:13px'>{b['rows']:,} water points</div></div>", unsafe_allow_html=True)
+
+        alerts = [{"Batch": b["label"], "Severity": a["severity"], "Area": a["area"], "Message": a["message"]}
+                  for b in M["batches"] for a in b["alerts"]]
+        st.markdown("**Alerts**")
+        if alerts:
+            st.dataframe(pd.DataFrame(alerts), width="stretch", hide_index=True)
+        else:
+            st.success("No alerts.")
+
+        left, right = st.columns(2)
+        with left:
+            st.markdown("**Data drift: share of inputs that differ from the training data**")
+            names = [b["label"].split(" (")[0].split(":")[0] for b in M["batches"]]
+            vals = [b["drift"]["drifted_feature_share"] * 100 for b in M["batches"]]
+            fig = bar(names, vals, color=[SEV[b["status"]][1] if b["drift"]["drifted_feature_share"] >= th["drifted_feature_share"]["amber"]
+                                          else TEAL for b in M["batches"]],
+                      text=[f"{v:.0f}%" for v in vals], xtitle="Inputs drifted (%)", height=260, xrange=[0, 105])
+            fig.add_vline(x=th["drifted_feature_share"]["amber"] * 100, line_dash="dot", line_color=GREY,
+                          annotation_text="review", annotation_position="top")
+            fig.add_vline(x=th["drifted_feature_share"]["red"] * 100, line_dash="dot", line_color=TERRA,
+                          annotation_text="act", annotation_position="top")
+            fig.update_layout(margin=dict(t=40))
+            st.plotly_chart(fig, width="stretch")
+        with right:
+            st.markdown("**Performance on labelled batches: share of broken points found**")
+            lab = [b for b in M["batches"] if b.get("performance")]
+            base = M["baseline"]["performance"]["nf_recall"] * 100
+            fig = bar(["At go-live"] + [b["label"].split(" (")[0].split(":")[0] for b in lab],
+                      [base] + [b["performance"]["nf_recall"] * 100 for b in lab],
+                      color=[GREY] + [TEAL] * len(lab),
+                      text=[f"{base:.0f}%"] + [f"{b['performance']['nf_recall'] * 100:.0f}%" for b in lab],
+                      xtitle="Broken points found (%)", height=260, xrange=[0, 105])
+            fig.add_vline(x=th["nf_recall"]["red"] * 100, line_dash="dot", line_color=TERRA,
+                          annotation_text="act below", annotation_position="top")
+            fig.update_layout(margin=dict(t=40))
+            st.plotly_chart(fig, width="stretch")
+
+        st.markdown("**Bias drift: gap between groups in share of broken points found**")
+        rows = []
+        for b in lab:
+            for grp, f in b["fairness"].items():
+                g0 = M["baseline"]["fairness"].get(grp, {})
+                rows.append({"Batch": b["label"].split(" (")[0].split(":")[0], "Grouping": grp.replace("_", " "),
+                             "Gap at go-live": f"{g0.get('recall_gap', float('nan')) * 100:.0f} pts",
+                             "Gap now": f"{f['recall_gap'] * 100:.0f} pts",
+                             "Change": f"{(f['recall_gap'] - g0.get('recall_gap', 0)) * 100:+.0f} pts",
+                             "Equalized odds diff.": round(f["equalized_odds_difference"], 2),
+                             "Disparate impact": round(f["disparate_impact_ratio"], 2)})
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+        st.caption(f"Review when a gap rises by {th['bias_drift']['amber'] * 100:.0f} points, act at "
+                   f"{th['bias_drift']['red'] * 100:.0f}. Only groups with at least 50 records and 10 broken points are compared. "
+                   "A red alert is also raised if remote points (over 20 km from a main road) become less likely to be found "
+                   "than nearby points.")
+
+        pick = st.selectbox("Inspect drift by input", [b["label"] for b in M["batches"]])
+        b = next(x for x in M["batches"] if x["label"] == pick)
+        feat = pd.DataFrame([{"Input": LABELS.get(k, k), "Test used": v["method"], "Score": v["score"],
+                              "Limit": v["threshold"], "Drifted": "yes" if v["drifted"] else "no"}
+                             for k, v in b["drift"]["features"].items()]).sort_values("Drifted", ascending=False)
+        st.dataframe(feat, width="stretch", hide_index=True)
+        if st.toggle(f"Load the full Evidently report for this batch (about 4.5 MB)", value=False):
+            html = DATA / "monitoring" / b["drift"]["html"]
+            if html.exists():
+                st.iframe(html, height=900)
+
+        if H is not None and len(H) > 1:
+            st.markdown("**History**")
+            st.dataframe(H, width="stretch", hide_index=True)
+
+        st.markdown("**What the results mean now**\n"
+                    "- **Hold-out test set:** green. The monitoring checks agree with the results reported at go-live.\n"
+                    "- **Points from other survey sources:** most inputs differ from the training data. "
+                    "The model would be working outside what it learned if applied to these points. "
+                    "This supports validating on FundiFix's own records before use in Kitui or Kwale.\n"
+                    "- **Stress test:** an older, less documented fleet lowers balanced accuracy and widens the "
+                    "road-access gap. The alerts fire as designed.")
+        es = M.get("explanation_store", {})
+        st.caption(f"Explanation store at last run: {es.get('rows', 0)} logged API predictions. "
+                   "Every /predict call stores inputs, outputs and top reasons for audit (GET /explanations/{id}). "
+                   "Response to alerts: docs/monitoring_plan.md.")
+
+# ---------- 8. Limits and transparency ----------
+with tabs[7]:
     st.subheader("What this model can and cannot do")
     a, b = st.columns(2)
     with a:
@@ -340,7 +457,7 @@ with tabs[6]:
     with b:
         st.markdown("**It cannot**\n"
                     "- Predict when a working water point will fail. The data has no repair history.\n"
-                    "- Speak for Kitui or Kwale yet. FundiFix's own counties are not in the training data.\n"
+                    "- Speak for Kitui or Kwale yet. Training data holds one Kitui record and no Kwale records.\n"
                     f"- Reach the Module 1 target of 80% balanced accuracy. It reached "
                     f"{pct(S['test_metrics']['random_forest']['balanced_accuracy'])}.\n"
                     "- Replace a field visit or a supervisor's judgement.")

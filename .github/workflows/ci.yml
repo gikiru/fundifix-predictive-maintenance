@@ -1,0 +1,99 @@
+# CI/CD for FundiFix Predictive Maintenance.
+#
+#   On every push and pull request:  lint for errors, run the 27 tests, validate docker-compose.yml,
+#                                    build the API and dashboard images.
+#   On push to main (after tests):   deploy the API to the Hugging Face Space and check it answers.
+#                                    Streamlit Community Cloud redeploys the dashboard by itself
+#                                    when main changes.
+#
+# One-time setup in GitHub > Settings > Secrets and variables > Actions:
+#   secret   HF_TOKEN   a Hugging Face access token with write permission
+#   variable HF_SPACE   <hf-username>/fundifix-api
+name: ci-cd
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt ruff
+      - name: Lint (errors only)
+        run: ruff check --select E9,F63,F7,F82 src api app scripts tests
+      - name: Run tests (pipeline, API, explanation store, monitoring alerts, retraining checks)
+        env:
+          MLFLOW_DISABLE_AGENT_HINT: "1"
+        run: pytest tests -v
+      - name: Model file matches its metadata
+        run: |
+          python - <<'EOF'
+          import json, joblib
+          m = joblib.load("models/fundifix_model.joblib")
+          meta = json.load(open("models/model_meta.json"))
+          assert list(m.feature_names_in_) == meta["features"], "model and metadata features differ"
+          print("model version", meta["version"], "threshold", meta["nf_threshold"])
+          EOF
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate docker-compose.yml
+        run: docker compose config -q
+      - name: Build API image
+        run: docker build -f docker/Dockerfile.api -t fundifix-api:ci .
+      - name: Start API container and call it
+        run: |
+          docker run -d --name api -p 7860:7860 fundifix-api:ci
+          for i in $(seq 1 30); do curl -sf localhost:7860/health && break; sleep 2; done
+          curl -sf -X POST localhost:7860/predict -H "content-type: application/json" \
+            -d '{"water_points":[{"distance_to_primary":12000,"distance_to_secondary":4000,"distance_to_tertiary":900,"distance_to_town":8000}]}'
+          docker logs api
+      - name: Build dashboard image
+        run: docker build -f docker/Dockerfile.dashboard -t fundifix-dashboard:ci .
+
+  deploy-api:
+    runs-on: ubuntu-latest
+    needs: [test, docker]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Deploy to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE: ${{ vars.HF_SPACE }}
+        run: |
+          if [ -z "$HF_TOKEN" ] || [ -z "$HF_SPACE" ]; then
+            echo "::warning::HF_TOKEN or HF_SPACE not set. Skipping deployment."; exit 0; fi
+          pip install "huggingface_hub>=0.30"
+          python scripts/deploy_hf_space.py
+      - name: Smoke test the live API (the Space rebuilds for a few minutes)
+        env:
+          HF_SPACE: ${{ vars.HF_SPACE }}
+        run: |
+          if [ -z "$HF_SPACE" ]; then exit 0; fi
+          HOST="https://$(echo "$HF_SPACE" | tr '/_.' '---' | tr 'A-Z' 'a-z').hf.space"
+          for i in $(seq 1 40); do
+            if curl -sf "$HOST/health"; then echo; curl -sf "$HOST/model-info"; exit 0; fi
+            sleep 30
+          done
+          echo "::error::API did not answer at $HOST/health within 20 minutes"; exit 1

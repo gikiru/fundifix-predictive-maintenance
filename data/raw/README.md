@@ -1,1 +1,1 @@
-Place WPdx Kenya CSV files here (wpdx_enhanced.csv, adm_analysis.csv). Gitignored; tracked via DVC.
+Place WPdx Kenya CSV files here (wpdx_enhanced.csv, adm_analysis.csv). Gitignored. Their SHA-256 fingerprints are in MANIFEST.json and checked at the start of every pipeline run. Download from https://data.humdata.org/dataset/wpdx_ken

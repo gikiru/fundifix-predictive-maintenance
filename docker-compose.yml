@@ -1,0 +1,77 @@
+# FundiFix multi-container setup: pipeline + API + dashboard + monitoring + MLflow.
+#
+#   docker compose up --build                 # pipeline runs once, then the services start
+#   docker compose run --rm retrain           # retrain with release gates (on demand)
+#
+# Open:  API docs   http://localhost:8000/docs
+#        Dashboard  http://localhost:8501   (Monitoring tab shows the latest monitoring run)
+#        MLflow     http://localhost:5000
+#
+# Raw WPdx files must be in data/raw/ first (see data/raw/README.md).
+
+x-mlops: &mlops
+  build: { context: ., dockerfile: Dockerfile }
+  image: fundifix-pipeline:latest
+  working_dir: /app
+  environment:
+    MLFLOW_TRACKING_URI: sqlite:////app/mlflow_docker/mlflow.db
+    FUNDIFIX_STORE: /app/store/explanation_store.duckdb
+    PREFECT_LOGGING_LEVEL: INFO
+  volumes:
+    - ./data:/app/data
+    - ./logs:/app/logs
+    - ./reports:/app/reports
+    - ./models:/app/models
+    - ./app/data:/app/app/data
+    - ./docs:/app/docs
+    - ./mlflow_docker:/app/mlflow_docker
+    - ./mlflow_docker/mlruns:/app/mlruns        # run artifacts (models, plots)
+    - store:/app/store
+
+services:
+  pipeline:                        # Module 3: ingest, clean, transform, validate, bias check, anonymise
+    <<: *mlops
+    command: ["python", "src/data/pipeline.py"]
+    restart: "no"
+
+  api:                             # Module 4: /predict, /explanations/{id}, /audit/summary
+    build: { context: ., dockerfile: docker/Dockerfile.api }
+    image: fundifix-api:latest
+    environment:
+      PORT: "8000"
+      FUNDIFIX_STORE: /app/store/explanation_store.duckdb
+    ports: ["8000:8000"]
+    volumes:
+      - store:/app/store
+    restart: unless-stopped
+
+  dashboard:                       # Module 5 + Final Project monitoring tab
+    build: { context: ., dockerfile: docker/Dockerfile.dashboard }
+    image: fundifix-dashboard:latest
+    ports: ["8501:8501"]
+    volumes:
+      - ./app/data:/app/app/data:ro          # sees new monitoring results without a rebuild
+    restart: unless-stopped
+
+  monitoring:                      # weekly: Evidently drift + Fairlearn bias drift, retrain if needed
+    <<: *mlops
+    command: ["sh", "-c", "while true; do python -m src.flows.mlops_flow; sleep 604800; done"]
+    depends_on:
+      pipeline: { condition: service_completed_successfully }
+      api: { condition: service_started }
+    restart: unless-stopped
+
+  retrain:                         # on demand only: docker compose run --rm retrain [--new-data ...]
+    <<: *mlops
+    entrypoint: ["python", "-m", "src.models.retrain"]
+    profiles: ["manual"]
+
+  mlflow:                          # experiment log and model registry for runs made inside Docker
+    <<: *mlops
+    command: ["mlflow", "ui", "--host", "0.0.0.0", "--port", "5000",
+              "--backend-store-uri", "sqlite:////app/mlflow_docker/mlflow.db"]
+    ports: ["5000:5000"]
+    restart: unless-stopped
+
+volumes:
+  store: {}                        # explanation store shared by api (writes) and monitoring (reads)

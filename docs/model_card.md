@@ -10,7 +10,8 @@ Format follows Mitchell et al. (2019), *Model Cards for Model Reporting*. All fi
 | Type | Random forest, 200 trees, minimum 5 records per leaf, 30% of inputs tried per split, balanced class weights |
 | Framework | scikit-learn 1.9.1 pipeline (median fill, scaling, one-hot encoding, forest) |
 | File | `models/fundifix_model.joblib`, served by `api/main.py` (`POST /predict`) |
-| Owner | Paul (MSc Data Analytics capstone, Nexford University), September 2026 |
+| Owner | Paul (MSc Data Analytics capstone, Nexford University), September 2026. Updated for the Final Project, October 2026 |
+| Live API | Hugging Face Docker Space, deployed by GitHub Actions (`.github/workflows/ci.yml`) |
 | Selection rule | Highest 5-fold cross-validated macro F1 among logistic regression, random forest and XGBoost |
 
 ## 2. Intended use
@@ -62,12 +63,14 @@ Mitigation with a Fairlearn ThresholdOptimizer (equal recall by county) cut the 
 - Global (SHAP): water source type and pump technology have the largest effect, followed by distance to the primary road, age, and distance to town and city.
 - Local: each API response returns the three inputs that moved that water point's Non-Functional probability the most.
 - Counterfactual (DiCE): for high-risk points, a change of management type (community to private operator) or technology is the most common change that flips the prediction to Functional. These are associations in the data, not proven causes.
+- Cross-check (LIME, Final Project): on 100 test points, LIME and SHAP agree on the first reason 52% of the time and share 45% of the top three reasons on average. Water source type is the most common first reason in both. Supervisors should treat the first reason as more reliable than the second and third.
+- Explanation store (Final Project): every `/predict` call stores the model version, threshold, inputs, probabilities, visit flag and top three reasons in an append-only table. `GET /explanations/{prediction_id}` returns them for audit. The caller's reference is stored only as a one-way hash.
 
 ## 7. Limitations and risks
 
 1. **Data source still leaks through.** 97% of Public Tapstand records come from KIWASH, so the top feature partly identifies the survey organisation.
 2. **Snapshot data.** Each record has one status at one date. The model estimates current status. It does not forecast failure (Module 1 goal G3 as first written cannot be tested).
-3. **Coverage.** Kitui has 33 records in WPdx and Kwale none, and neither is among the mixed-label sources. The model has not seen FundiFix's own counties.
+3. **Coverage.** Kitui has 33 records in WPdx and Kwale none. Only one Kitui record is in the mixed-label training data, and none is in the test set. Performance in FundiFix's own counties is unknown.
 4. **Old records.** Training labels date from 2011 to 2021 (risk ER1).
 5. **Small groups.** Fairness results for small counties and urban points rest on very few broken water points.
 6. **Stability.** Moving any single input by 20% changes the visit flag for at most 5.3% of water points. 10% random noise on all numeric inputs changes 7.8%.
@@ -80,12 +83,17 @@ Mitigation with a Fairlearn ThresholdOptimizer (equal recall by county) cut the 
 
 ## 9. Monitoring after deployment
 
-| Signal | Alert when |
-|---|---|
-| Recall on inspected points (share of points found broken that were flagged) | Below 0.60 over a month |
-| Share of points flagged | Moves more than 10 points from 41% |
-| Input drift (population stability index per input) | Above 0.2 for any top-5 input |
-| Share of unknown technology or management values | Above 25% |
-| Recall gap between counties | Above 0.15 |
+Implemented in `src/monitoring/monitor.py` (Evidently and Fairlearn), run weekly by `src/flows/mlops_flow.py`. Full plan: `docs/monitoring_plan.md`.
 
-Retrain when FundiFix adds new inspection results, and at least every quarter.
+| Signal | Review (amber) | Act (red) |
+|---|---|---|
+| Share of broken points found | below 65% | below 60% |
+| Broken points per 100 visits | below 22 | below 18 |
+| Balanced accuracy, drop from go-live | 0.03 | 0.05 |
+| Share of points flagged, change from 41% | 10 points | 20 points |
+| Share of inputs drifted from training data | 25% | 50% |
+| Rise in a fairness gap between groups (bias drift) | 5 points | 10 points |
+| Remote points found less often than near points | n/a | any week |
+
+First run (October 2026): hold-out batch green, WPdx sources not used in training red (81% of inputs drift), simulated stress test amber.
+Retraining (`src/models/retrain.py`) runs on new labelled data or a red control batch. A new version must pass four gates and a named approval before it becomes champion.

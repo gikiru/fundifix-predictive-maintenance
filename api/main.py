@@ -18,7 +18,8 @@ from pydantic import BaseModel, Field
 
 from src.models.config import CLASSES, FEATURES, MODEL_DIR, MODEL_PATH
 from src.models.data import add_derived_features
-from src.models.explain import original_feature, readable
+from src.models.labels import original_feature, readable
+from src.models import explanation_store as store
 
 NF = CLASSES.index("Non-Functional")
 STATE = {}
@@ -26,7 +27,8 @@ STATE = {}
 
 class WaterPoint(BaseModel):
     """One water point. Distances are in metres, as in WPdx. Unknown values can be left out."""
-    water_point_id: Optional[str] = Field(None, examples=["6G9VWV9J+J84"])
+    water_point_id: Optional[str] = Field(None, examples=["WP-0001"],
+                                           description="Your own reference. Stored only as a one-way hash.")
     install_year: Optional[int] = Field(None, ge=1900, le=2100, examples=[2008])
     assessment_year: Optional[int] = Field(None, ge=1900, le=2100,
                                            description="Year the status is estimated for. Defaults to this year.")
@@ -56,6 +58,7 @@ class Reason(BaseModel):
 
 
 class Prediction(BaseModel):
+    prediction_id: Optional[str] = Field(None, description="Key for GET /explanations/{prediction_id}")
     water_point_id: Optional[str]
     predicted_status: str
     probabilities: dict
@@ -118,6 +121,21 @@ def model_info():
                               "nf_threshold", "training_scope", "test_metrics"]}
 
 
+@app.get("/explanations/{prediction_id}")
+def explanation(prediction_id: str):
+    """Audit lookup: the stored inputs, outputs and reasons for one past prediction."""
+    row = store.get_prediction(prediction_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="No stored prediction with that ID")
+    return row
+
+
+@app.get("/audit/summary")
+def audit_summary():
+    """How many predictions are stored, over what period, and the share flagged."""
+    return store.summary()
+
+
 @app.post("/predict", response_model=PredictResponse)
 def predict(req: PredictRequest):
     try:
@@ -134,4 +152,19 @@ def predict(req: PredictRequest):
                         flag_for_visit=bool(pr[NF] >= thr),
                         top_reasons=r)
              for p, pr, r in zip(req.water_points, proba, why)]
+    # Audit trail: every prediction and its reasons are stored before the answer is returned.
+    # If the store cannot be written, the request fails rather than returning an unlogged decision.
+    meta = STATE["meta"]
+    records = [{"model_name": meta["registered_model"], "model_version": meta["version"], "nf_threshold": thr,
+                "point_ref": p.water_point_id, "features": X.iloc[i].to_dict(),
+                "p_functional": pr.probabilities["Functional"], "p_needs_repair": pr.probabilities["Needs Repair"],
+                "p_non_functional": pr.p_non_functional, "predicted_status": pr.predicted_status,
+                "flag_for_visit": pr.flag_for_visit, "top_reasons": [r.model_dump() for r in pr.top_reasons]}
+               for i, (p, pr) in enumerate(zip(req.water_points, preds))]
+    try:
+        ids = store.log_predictions(records)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Explanation store unavailable, prediction not released: {e}")
+    for pr, pid in zip(preds, ids):
+        pr.prediction_id = pid
     return PredictResponse(model_version=STATE["meta"]["version"], nf_threshold=thr, predictions=preds)

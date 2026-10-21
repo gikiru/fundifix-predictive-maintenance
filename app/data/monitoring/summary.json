@@ -1,0 +1,513 @@
+{
+  "run_at": "2026-10-21T14:47:21+00:00",
+  "model_version": 1,
+  "nf_threshold": 0.27,
+  "thresholds": {
+    "drifted_feature_share": {
+      "amber": 0.25,
+      "red": 0.5
+    },
+    "flag_rate_change": {
+      "amber": 0.1,
+      "red": 0.2
+    },
+    "nf_recall": {
+      "amber": 0.65,
+      "red": 0.6
+    },
+    "hits_per_100": {
+      "amber": 22,
+      "red": 18
+    },
+    "balanced_accuracy_drop": {
+      "amber": 0.03,
+      "red": 0.05
+    },
+    "bias_drift": {
+      "amber": 0.05,
+      "red": 0.1
+    }
+  },
+  "baseline": {
+    "model_version": 1,
+    "set_at": "2026-10-21T14:46:56+00:00",
+    "nf_threshold": 0.27,
+    "flag_rate": 0.4112531969309463,
+    "performance": {
+      "balanced_accuracy": 0.5665169582490673,
+      "macro_f1": 0.5618863517377471,
+      "nf_recall": 0.6865203761755486,
+      "hits_per_100": 27.238805970149254,
+      "random_hits_per_100": 16.317135549872123
+    },
+    "fairness": {
+      "county": {
+        "equalized_odds_difference": 0.46767001114827195,
+        "demographic_parity_difference": 0.4544324324324325,
+        "disparate_impact_ratio": 0.3340990099009901,
+        "recall_gap": 0.46767001114827195,
+        "recall_by_group": {
+          "Busia": 0.6667,
+          "Embu": 0.3913,
+          "Kakamega": 0.5,
+          "Kisumu": 0.8033,
+          "Makueni": 0.859,
+          "Migori": 0.8,
+          "Siaya": 0.7931
+        },
+        "groups": 7
+      },
+      "road_access": {
+        "equalized_odds_difference": 0.19893524554541497,
+        "demographic_parity_difference": 0.1704054758149129,
+        "disparate_impact_ratio": 0.6420164035206094,
+        "recall_gap": 0.19893524554541497,
+        "recall_by_group": {
+          "5-20 km": 0.7244,
+          "over 20 km": 0.7212,
+          "under 5 km": 0.5254
+        },
+        "groups": 3
+      }
+    }
+  },
+  "reference_rows": 7818,
+  "explanation_store": {
+    "rows": 0
+  },
+  "batches": [
+    {
+      "name": "holdout",
+      "label": "Hold-out test set (labelled)",
+      "rows": 1955,
+      "labelled": true,
+      "drift": {
+        "drifted_feature_share": 0.0,
+        "features": {
+          "age_at_report": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.023,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "install_year_missing": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.019,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "local_population": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0448,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "assigned_population": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0441,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "usage_cap": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.023,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "criticality": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0161,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "pressure": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0827,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_primary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0357,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_secondary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0604,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_tertiary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0197,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_city": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0433,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_town": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0249,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "water_source_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0403,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "water_tech_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0332,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "management_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0092,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "is_urban": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0134,
+            "threshold": 0.1,
+            "drifted": false
+          }
+        },
+        "html": "drift_holdout.html"
+      },
+      "prediction": {
+        "flag_rate": 0.4112531969309463,
+        "mean_p_nf": 0.24758315085276922
+      },
+      "performance": {
+        "balanced_accuracy": 0.5665169582490673,
+        "macro_f1": 0.5618863517377471,
+        "nf_recall": 0.6865203761755486,
+        "hits_per_100": 27.238805970149254,
+        "random_hits_per_100": 16.317135549872123
+      },
+      "fairness": {
+        "county": {
+          "equalized_odds_difference": 0.46767001114827195,
+          "demographic_parity_difference": 0.4544324324324325,
+          "disparate_impact_ratio": 0.3340990099009901,
+          "recall_gap": 0.46767001114827195,
+          "recall_by_group": {
+            "Busia": 0.6667,
+            "Embu": 0.3913,
+            "Kakamega": 0.5,
+            "Kisumu": 0.8033,
+            "Makueni": 0.859,
+            "Migori": 0.8,
+            "Siaya": 0.7931
+          },
+          "groups": 7
+        },
+        "road_access": {
+          "equalized_odds_difference": 0.19893524554541497,
+          "demographic_parity_difference": 0.1704054758149129,
+          "disparate_impact_ratio": 0.6420164035206094,
+          "recall_gap": 0.19893524554541497,
+          "recall_by_group": {
+            "5-20 km": 0.7244,
+            "over 20 km": 0.7212,
+            "under 5 km": 0.5254
+          },
+          "groups": 3
+        }
+      },
+      "alerts": [],
+      "status": "green"
+    },
+    {
+      "name": "outside_sources",
+      "label": "WPdx points from sources not used in training (drift only)",
+      "rows": 12179,
+      "labelled": false,
+      "drift": {
+        "drifted_feature_share": 0.8125,
+        "features": {
+          "age_at_report": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.1413,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "install_year_missing": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.6361,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "local_population": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.1893,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "assigned_population": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.104,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "usage_cap": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.1292,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "criticality": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.3104,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "pressure": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.1639,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "distance_to_primary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.1689,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "distance_to_secondary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0932,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_tertiary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0714,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_city": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.1157,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "distance_to_town": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.2766,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "water_source_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.3548,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "water_tech_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.6264,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "management_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.6805,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "is_urban": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0852,
+            "threshold": 0.1,
+            "drifted": false
+          }
+        },
+        "html": "drift_outside_sources.html"
+      },
+      "prediction": {
+        "flag_rate": 0.38443221939403893,
+        "mean_p_nf": 0.2599220615707569
+      },
+      "alerts": [
+        {
+          "severity": "red",
+          "area": "data drift",
+          "message": "81% of inputs have drifted from the training data"
+        }
+      ],
+      "status": "red"
+    },
+    {
+      "name": "stress_test",
+      "label": "Stress test: simulated older, less documented fleet",
+      "rows": 1955,
+      "labelled": true,
+      "drift": {
+        "drifted_feature_share": 0.1875,
+        "features": {
+          "age_at_report": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.5856,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "install_year_missing": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.019,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "local_population": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0448,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "assigned_population": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0441,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "usage_cap": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.023,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "criticality": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0161,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "pressure": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0827,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_primary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.4036,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "distance_to_secondary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0604,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_tertiary": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0197,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_city": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0433,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "distance_to_town": {
+            "method": "Wasserstein distance (normed)",
+            "score": 0.0249,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "water_source_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0403,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "water_tech_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.1805,
+            "threshold": 0.1,
+            "drifted": true
+          },
+          "management_clean": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0092,
+            "threshold": 0.1,
+            "drifted": false
+          },
+          "is_urban": {
+            "method": "Jensen-Shannon distance",
+            "score": 0.0134,
+            "threshold": 0.1,
+            "drifted": false
+          }
+        },
+        "html": "drift_stress_test.html"
+      },
+      "prediction": {
+        "flag_rate": 0.4194373401534527,
+        "mean_p_nf": 0.2522167152346225
+      },
+      "performance": {
+        "balanced_accuracy": 0.5231333192407236,
+        "macro_f1": 0.5147879124304936,
+        "nf_recall": 0.6802507836990596,
+        "hits_per_100": 26.463414634146343,
+        "random_hits_per_100": 16.317135549872123
+      },
+      "fairness": {
+        "county": {
+          "equalized_odds_difference": 0.44871794871794873,
+          "demographic_parity_difference": 0.4372702702702703,
+          "disparate_impact_ratio": 0.3223455497382199,
+          "recall_gap": 0.44871794871794873,
+          "recall_by_group": {
+            "Busia": 0.6111,
+            "Embu": 0.4783,
+            "Kakamega": 0.4231,
+            "Kisumu": 0.7541,
+            "Makueni": 0.8718,
+            "Migori": 0.8,
+            "Siaya": 0.7586
+          },
+          "groups": 7
+        },
+        "road_access": {
+          "equalized_odds_difference": 0.2869047619047619,
+          "demographic_parity_difference": 0.22548138639281134,
+          "disparate_impact_ratio": 0.5553164556962025,
+          "recall_gap": 0.2869047619047619,
+          "recall_by_group": {
+            "5-20 km": 0.6515,
+            "over 20 km": 0.7619,
+            "under 5 km": 0.475
+          },
+          "groups": 3
+        }
+      },
+      "alerts": [
+        {
+          "severity": "amber",
+          "area": "performance",
+          "message": "Balanced accuracy fell by 0.043"
+        },
+        {
+          "severity": "amber",
+          "area": "bias drift",
+          "message": "road access: gap in share of broken points found is 29% (go-live 20%)"
+        }
+      ],
+      "status": "amber"
+    }
+  ]
+}

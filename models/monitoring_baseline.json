@@ -1,0 +1,43 @@
+{
+  "model_version": 1,
+  "set_at": "2026-10-21T14:46:56+00:00",
+  "nf_threshold": 0.27,
+  "flag_rate": 0.4112531969309463,
+  "performance": {
+    "balanced_accuracy": 0.5665169582490673,
+    "macro_f1": 0.5618863517377471,
+    "nf_recall": 0.6865203761755486,
+    "hits_per_100": 27.238805970149254,
+    "random_hits_per_100": 16.317135549872123
+  },
+  "fairness": {
+    "county": {
+      "equalized_odds_difference": 0.46767001114827195,
+      "demographic_parity_difference": 0.4544324324324325,
+      "disparate_impact_ratio": 0.3340990099009901,
+      "recall_gap": 0.46767001114827195,
+      "recall_by_group": {
+        "Busia": 0.6667,
+        "Embu": 0.3913,
+        "Kakamega": 0.5,
+        "Kisumu": 0.8033,
+        "Makueni": 0.859,
+        "Migori": 0.8,
+        "Siaya": 0.7931
+      },
+      "groups": 7
+    },
+    "road_access": {
+      "equalized_odds_difference": 0.19893524554541497,
+      "demographic_parity_difference": 0.1704054758149129,
+      "disparate_impact_ratio": 0.6420164035206094,
+      "recall_gap": 0.19893524554541497,
+      "recall_by_group": {
+        "5-20 km": 0.7244,
+        "over 20 km": 0.7212,
+        "under 5 km": 0.5254
+      },
+      "groups": 3
+    }
+  }
+}

@@ -109,6 +109,17 @@ def test_area_names_kept_in_export():
     assert anon["clean_adm3"].iloc[0] == "Rigoma"
 
 
+def test_location_coded_ids_replaced_in_export():
+    """wpdx_id is a plus code (location). It must be replaced, and enumerator codes dropped."""
+    df = pd.DataFrame({"wpdx_id": ["6GFP7WM7+F9V", "6GFPMR43+P6M"],
+                       "activity_id": ["Nyamira-Enumerator-962UET", "9286"],
+                       "clean_adm1": ["Nyamira", "Kisumu"]})
+    anon = anonymize_for_export(df)
+    assert "activity_id" not in anon.columns
+    assert anon["wpdx_id"].tolist() == ["WPX-00001", "WPX-00002"]
+    assert not anon["wpdx_id"].str.contains(r"\+").any()
+
+
 def test_export_keeps_all_rows(sample_clean):
     """Anonymisation removes columns only, never records."""
     assert len(anonymize_for_export(sample_clean)) == len(sample_clean)

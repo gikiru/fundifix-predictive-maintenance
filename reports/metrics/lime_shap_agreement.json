@@ -1,0 +1,29 @@
+{
+  "points_compared": 100,
+  "mean_top3_overlap": 0.447,
+  "top1_agreement": 0.52,
+  "share_with_at_least_2_of_3_shared": 0.41,
+  "most_common_shap_top1": {
+    "water_source_clean": 54,
+    "water_tech_clean": 16,
+    "distance_to_town": 8
+  },
+  "most_common_lime_top1": {
+    "water_source_clean": 78,
+    "distance_to_town": 8,
+    "is_urban": 3
+  },
+  "example": {
+    "p_nf": 0.72,
+    "shap_top3": [
+      "Water source type",
+      "Usage capacity (people)",
+      "Management type"
+    ],
+    "lime_top3": [
+      "Water source type",
+      "Distance to town",
+      "Urban or rural"
+    ]
+  }
+}

@@ -1,25 +1,20 @@
-# FundiFix Predictive Maintenance — Data Pipeline Container
+# FundiFix pipeline and MLOps image: data pipeline, training, monitoring, retraining, MLflow.
 # Build: docker build -t fundifix-pipeline .
-# Run:   docker run --rm -v $(pwd)/data:/app/data -v $(pwd)/logs:/app/logs fundifix-pipeline
+# Run the pipeline alone:
+#   docker run --rm -v ./data:/app/data -v ./logs:/app/logs -v ./reports:/app/reports fundifix-pipeline
+# Normally started through docker-compose.yml.
+FROM python:3.12-slim
 
-FROM python:3.11-slim
-
-LABEL maintainer="gikiru"
-LABEL project="fundifix-predictive-maintenance"
-LABEL description="Data pipeline for rural water point failure prediction"
+LABEL maintainer="gikiru" project="fundifix-predictive-maintenance"
 
 WORKDIR /app
-
-# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code
-COPY src/ ./src/
-COPY tests/ ./tests/
+COPY src/ src/
+COPY tests/ tests/
+COPY api/ api/
+RUN mkdir -p data/raw data/processed logs reports models app/data \
+ && mkdir -p /app/store && chown 1000:1000 /app/store   # shared with the API container (user 1000)
 
-# Create required directories
-RUN mkdir -p data/raw data/processed logs
-
-# Default command: run the full pipeline
 CMD ["python", "src/data/pipeline.py"]

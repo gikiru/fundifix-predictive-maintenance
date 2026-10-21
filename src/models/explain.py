@@ -21,39 +21,7 @@ from src.models.data import load_modelling_data, split
 warnings.filterwarnings("ignore")
 NF = CLASSES.index("Non-Functional")
 
-LABELS = {
-    "age_at_report": "Age at report (years)",
-    "install_year_missing": "Install year not recorded",
-    "local_population": "Population within 1 km",
-    "assigned_population": "Population assigned to point",
-    "usage_cap": "Usage capacity (people)",
-    "criticality": "Criticality score",
-    "pressure": "Demand pressure",
-    "distance_to_primary": "Distance to primary road",
-    "distance_to_secondary": "Distance to secondary road",
-    "distance_to_tertiary": "Distance to tertiary road",
-    "distance_to_city": "Distance to city",
-    "distance_to_town": "Distance to town",
-    "water_source_clean": "Water source type",
-    "water_tech_clean": "Pump / technology type",
-    "management_clean": "Management type",
-    "is_urban": "Urban or rural",
-}
-
-
-def original_feature(name: str) -> str:
-    """Map a one-hot column (e.g. water_tech_clean_Hand Pump) back to its source feature."""
-    for c in CATEGORICAL_FEATURES:
-        if name.startswith(c + "_"):
-            return c
-    return name
-
-
-def readable(name: str) -> str:
-    base = original_feature(name)
-    if base == name:
-        return LABELS.get(name, name)
-    return f"{LABELS[base]}: {name[len(base) + 1:]}"
+from src.models.labels import LABELS, original_feature, readable  # noqa: E402,F401
 
 
 def shap_values(model, X):
@@ -182,9 +150,10 @@ def main():
     summary = {"sample_size": len(sample),
                "top_features": g["all_classes"].head(8).round(4).to_dict(),
                "top_features_non_functional": g["Non-Functional"].sort_values(ascending=False).head(8).round(4).to_dict(),
-               "local": {"caught": {"p_nf": float(p_nf[caught]), "wpdx_id": sample.loc[caught, "wpdx_id"]},
-                         "missed": {"p_nf": float(p_nf[missed]), "wpdx_id": sample.loc[missed, "wpdx_id"]}},
-               "counterfactual_queries": top[["wpdx_id"] + FEATURES].astype(str).to_dict(orient="records"),
+               "local": {"caught": {"p_nf": float(p_nf[caught]), "sample_row": caught},
+                         "missed": {"p_nf": float(p_nf[missed]), "sample_row": missed}},
+               # wpdx_id is a plus code (exact location), so it is never written to reports
+               "counterfactual_queries": top[FEATURES].astype(str).to_dict(orient="records"),
                "counterfactual_query_p_nf": [float(x) for x in np.sort(-p_nf)[:3] * -1],
                "counterfactuals": cfs}
     (METRICS_DIR / "explainability_summary.json").write_text(json.dumps(summary, indent=2, default=str))
