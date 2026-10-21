@@ -1,4 +1,4 @@
-# API only (Docker image for Docker Compose and the Hugging Face Space).
+# API only (Docker image for Docker Compose and the Render web service).
 # scikit-learn, numpy and joblib must match the versions that trained models/fundifix_model.joblib.
 fastapi==0.142.0
 uvicorn==0.54.0

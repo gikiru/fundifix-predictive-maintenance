@@ -42,5 +42,5 @@ Last reconciled: Final Project (October 2026). See `docs/reconciliation_log.md` 
 | D2 | Streamlit Community Cloud free tier | External | Available |
 | D3 | Module 1 Vision Document decisions | Internal | Complete |
 | D4 | GitHub Free plan and GitHub Actions | External | Available |
-| D5 | Hugging Face Spaces free tier (live API) | External | Available |
+| D5 | Render free web service (live API). Hugging Face Docker Spaces were tried first but now need a paid plan | External | Available |
 | D6 | FundiFix repair records for validation | External | Not yet agreed |

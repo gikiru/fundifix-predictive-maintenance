@@ -1,8 +1,8 @@
 # FundiFix status API: FastAPI + the registered model + the explanation store.
-# Used by docker-compose.yml (service "api") and by the Hugging Face Docker Space.
+# Used by docker-compose.yml (service "api") and by the Render web service (render.yaml).
 FROM python:3.12-slim
 
-# Hugging Face Spaces run containers as user 1000
+# Runs as a non-root user
 RUN useradd -m -u 1000 user
 WORKDIR /app
 

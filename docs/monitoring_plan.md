@@ -7,14 +7,14 @@ Results: dashboard Monitoring tab (`app/data/monitoring/`).
 
 | Phase | When | What | Exit condition |
 |---|---|---|---|
-| 0. Live demo | Now | API on Hugging Face, dashboard on Streamlit Cloud, CI/CD on GitHub Actions | Tests pass, uptime check green |
+| 0. Live demo | Now | API on Render, dashboard on Streamlit Cloud, CI/CD on GitHub Actions | Tests pass, uptime check green |
 | 1. Data | Months 1 to 3 | FundiFix records every inspection result in a dated, consistent format | Records for every visit in Kitui and Kwale |
 | 2. Validate | Months 3 to 4 | Score FundiFix records. Compare with what teams found | At least 65% of broken points found (gate) |
 | 3. Pilot | Months 4 to 6 | One county uses the visit list beside current practice | Shorter downtime, fewer visits per broken point found |
 | 4. Retrain | Month 6 | Retrain on FundiFix data through the release gates | Challenger passes all gates and is approved |
 | 5. Operate | Ongoing | Weekly monitoring, quarterly board review | No unresolved red alerts |
 
-Production note: the free tiers sleep when idle and the Hugging Face Space loses its explanation store on restart.
+Production note: the free tiers sleep when idle (the first API call after 15 idle minutes takes about a minute) and the Render free instance loses its explanation store on restart.
 For routine use, the API should move to an always-on host with the store on persistent storage.
 
 ## 2. Performance KPIs
@@ -84,7 +84,7 @@ the data source ends, or a better system replaces it.
 
 1. The board approves retirement and a last date of use. Field teams are told two weeks ahead.
 2. Dispatch returns to the reactive process, or moves to the replacement system, with no gap in the repair guarantee.
-3. The API and dashboard are taken down, and the Hugging Face Space and Streamlit app are deleted. The uptime workflow is disabled.
+3. The API and dashboard are taken down, and the Render service and Streamlit app are deleted. The uptime workflow is disabled.
 4. The model version is archived in MLflow with the tag `retired` and the reason. The model file is kept for 2 years for audit, then deleted.
 5. The explanation store is kept read-only for 2 years so past decisions can still be explained, then deleted. Any personal data is deleted earlier if no longer needed.
 6. A closing note is added to the Model Card and the public trust statement, saying what the model did, why it was retired and what replaced it.

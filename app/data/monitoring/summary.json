@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-21T14:47:21+00:00",
+  "run_at": "2026-10-19T19:33:56+00:00",
   "model_version": 1,
   "nf_threshold": 0.27,
   "thresholds": {
@@ -30,7 +30,7 @@
   },
   "baseline": {
     "model_version": 1,
-    "set_at": "2026-10-21T14:46:56+00:00",
+    "set_at": "2026-10-19T19:15:54+00:00",
     "nf_threshold": 0.27,
     "flag_rate": 0.4112531969309463,
     "performance": {
@@ -336,7 +336,7 @@
       },
       "prediction": {
         "flag_rate": 0.38443221939403893,
-        "mean_p_nf": 0.2599220615707569
+        "mean_p_nf": 0.25992206157075687
       },
       "alerts": [
         {

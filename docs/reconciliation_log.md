@@ -20,7 +20,7 @@ version is now true and where the change was made.
 | C12 | M1: Git Flow branches and pull requests | Work committed to `main` | CI now runs on every push and pull request. Branching stated as simplified. |
 | C13 | M1: semantic model versions (1.0.0) | MLflow registry integer versions with aliases (`champion`, `challenger`) | MLflow versions are the record. Report uses them. |
 | C14 | M4 Model Card: explanations "available" | Explanations shown on screen but not stored | Explanation store added: every API prediction and its top reasons are appended to `data/explanation_store.duckdb`. |
-| C15 | M4: "Live API" required | API ran only locally | Deployed to a Hugging Face Docker Space. CI deploys on push to `main`. |
+| C15 | M4: "Live API" required | API ran only locally | Deployed as a Render free web service. CI triggers the deploy on push to `main` after tests pass. (Hugging Face Docker Spaces were tried first but now require a paid plan.) |
 | C16 | M5 dashboard: 7 tabs, no monitoring | Brief needs monitoring of performance, drift and fairness | Monitoring tab added, fed by `src/monitoring/monitor.py` (Evidently and Fairlearn). |
 | C17 | M1 FO1: equal accuracy across regions | County gap 39% to 86% in share found. Mitigation narrowed it but cut overall recall | Reported as not met, with the trade-off. Left as a governance decision for the trust funds. |
 | C18 | M1 NFR: works on 3G | Dashboard uses precomputed data and caching, but was not tested on a throttled link | Stated as untested. |

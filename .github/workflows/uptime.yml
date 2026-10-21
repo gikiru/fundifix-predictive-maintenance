@@ -1,5 +1,5 @@
 # Weekly check that the live API and dashboard answer. Opens an issue if either is down.
-# Set repository variables HF_SPACE (<hf-username>/fundifix-api) and DASHBOARD_URL.
+# Set repository variables API_URL (for example https://fundifix-api.onrender.com) and DASHBOARD_URL.
 name: uptime
 
 on:
@@ -17,14 +17,13 @@ jobs:
       - name: Call the live API and dashboard
         id: check
         env:
-          HF_SPACE: ${{ vars.HF_SPACE }}
+          API_URL: ${{ vars.API_URL }}
           DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
         run: |
           fail=""
-          if [ -n "$HF_SPACE" ]; then
-            HOST="https://$(echo "$HF_SPACE" | tr '/_.' '---' | tr 'A-Z' 'a-z').hf.space"
-            ok=""; for i in $(seq 1 10); do curl -sf "$HOST/health" && ok=1 && break; sleep 30; done
-            [ -z "$ok" ] && fail="$fail API($HOST)"
+          if [ -n "$API_URL" ]; then
+            ok=""; for i in $(seq 1 10); do curl -sf "$API_URL/health" && ok=1 && break; sleep 30; done
+            [ -z "$ok" ] && fail="$fail API($API_URL)"
           fi
           if [ -n "$DASHBOARD_URL" ]; then
             curl -sfL -o /dev/null "$DASHBOARD_URL" || fail="$fail dashboard($DASHBOARD_URL)"

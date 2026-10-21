@@ -1,0 +1,12 @@
+# Render Blueprint for the live API (free web service, Docker).
+# One-time setup: Render dashboard > New > Blueprint > connect this GitHub repository.
+# Auto-deploy is off: GitHub Actions triggers a deploy through a deploy hook only after tests pass.
+services:
+  - type: web
+    name: fundifix-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./docker/Dockerfile.api
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: false

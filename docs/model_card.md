@@ -11,7 +11,7 @@ Format follows Mitchell et al. (2019), *Model Cards for Model Reporting*. All fi
 | Framework | scikit-learn 1.9.1 pipeline (median fill, scaling, one-hot encoding, forest) |
 | File | `models/fundifix_model.joblib`, served by `api/main.py` (`POST /predict`) |
 | Owner | Paul (MSc Data Analytics capstone, Nexford University), September 2026. Updated for the Final Project, October 2026 |
-| Live API | Hugging Face Docker Space, deployed by GitHub Actions (`.github/workflows/ci.yml`) |
+| Live API | Render free web service (Docker, `render.yaml`), deployed by GitHub Actions after tests pass (`.github/workflows/ci.yml`) |
 | Selection rule | Highest 5-fold cross-validated macro F1 among logistic regression, random forest and XGBoost |
 
 ## 2. Intended use

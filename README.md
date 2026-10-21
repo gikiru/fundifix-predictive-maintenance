@@ -12,7 +12,7 @@ MSc Data Analytics capstone, Nexford University. Modules 1 to 5 and the Final Pr
 |---|---|
 | Stakeholder dashboard (with explainability and fairness tabs) | `[insert Streamlit Cloud URL]` |
 | Monitoring dashboard | same app, **Monitoring** tab |
-| Live API (`/predict`, `/explanations/{id}`) | `https://<hf-username>-fundifix-api.hf.space/docs` |
+| Live API (`/predict`, `/explanations/{id}`) | `https://fundifix-api.onrender.com/docs` (replace with your Render URL) |
 | CI/CD runs | [GitHub Actions](https://github.com/gikiru/fundifix-predictive-maintenance/actions) |
 
 ## Results in one paragraph
@@ -22,7 +22,7 @@ On 1,955 test water points, a visit list built from the model covers 41% of poin
 ## Architecture
 
 ```
-WPdx CSVs ─► Prefect pipeline ─► DuckDB ─► training (MLflow) ─► registered model ─┬─► FastAPI (Hugging Face Space) ─► explanation store
+WPdx CSVs ─► Prefect pipeline ─► DuckDB ─► training (MLflow) ─► registered model ─┬─► FastAPI (Render)      ─► explanation store
  (data/raw)   ingest, clean,       clean      RF / XGBoost,       models/            │                                        │
               validate (GE),       table      SHAP, LIME, DiCE,   fundifix_model     └─► Streamlit dashboard ◄── monitoring ◄──┘
               bias check, anonymise           Fairlearn                                    (8 tabs)            Evidently + Fairlearn
@@ -39,7 +39,7 @@ WPdx CSVs ─► Prefect pipeline ─► DuckDB ─► training (MLflow) ─► 
 | `src/flows/mlops_flow.py` | weekly Prefect flow: monitor, then retrain if new labels or a red alert | Final |
 | `api/` | FastAPI service | 4, Final |
 | `app/` | Streamlit dashboard and the data it reads (`app/data/monitoring/` holds the latest monitoring run) | 5, Final |
-| `docker/`, `Dockerfile`, `docker-compose.yml` | containers for pipeline, API, dashboard, monitoring, MLflow | 3, Final |
+| `docker/`, `Dockerfile`, `docker-compose.yml`, `render.yaml` | containers for pipeline, API, dashboard, monitoring, MLflow, and the Render service for the live API | 3, Final |
 | `.github/workflows/` | CI/CD (`ci.yml`) and weekly uptime check (`uptime.yml`) | Final |
 | `tests/` | 27 tests: pipeline, API and audit store, monitoring alerts, retraining checks | 3 to Final |
 | `docs/` | Model Card, fairness report, data dictionary, RAID log, reconciliation log, Ethical AI framework, impact assessment, compliance report, monitoring plan | 2 to Final |
@@ -84,7 +84,7 @@ python -m src.models.retrain --promote 2 --approved-by "Name, Operations Manager
 ## Deployment
 
 - **Dashboard:** Streamlit Community Cloud, entrypoint `app/dashboard.py`, requirements `app/requirements.txt`. Redeploys on push to `main`.
-- **API:** Hugging Face Docker Space. `ci.yml` deploys it on push to `main` after tests pass. Needs the secret `HF_TOKEN` and the variable `HF_SPACE` (`<hf-username>/fundifix-api`).
+- **API:** Render free web service defined in `render.yaml`. `ci.yml` triggers a deploy on push to `main` after tests pass. Needs the secret `RENDER_DEPLOY_HOOK` and the variable `API_URL` (for example `https://fundifix-api.onrender.com`). The free instance sleeps after 15 idle minutes, so the first call can take about a minute.
 
 ## Governance
 
